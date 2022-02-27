@@ -1,9 +1,12 @@
 package com.github.ZooMMaXDecentralNetwork.messenger.server.database;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import ru.zoommax.hul.HexUtils;
 
 public class DB {
     protected static final String url = "jdbc:sqlite:ZDNms.db";
@@ -39,6 +42,7 @@ public class DB {
     }
 
     public static void newServer(String ip){
+        ip = hexMe(ip);
         String sql = "INSERT INTO servers(ip, alive, count) VALUES('"+ip+"', 'off', '1');";
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
@@ -49,6 +53,7 @@ public class DB {
     }
 
     public static boolean existsServer(String ip){
+        ip = hexMe(ip);
         String sql = "SELECT * FROM servers WHERE ip like '"+ip+"';";
         boolean tmp = false;
         try (Connection conn = DriverManager.getConnection(url);
@@ -72,7 +77,8 @@ public class DB {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()){
-                tmp.add(rs.getString("ip"));
+                String res = unHexMe(rs.getString("ip"));
+                tmp.add(res);
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -87,7 +93,8 @@ public class DB {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()){
-                tmp.add(rs.getString("ip"));
+                 String res = unHexMe(rs.getString("ip"));
+                tmp.add(res);
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -96,15 +103,16 @@ public class DB {
     }
 
     public static HashMap<String, String> getServer(String ip){
+        ip = hexMe(ip);
         String sql = "SELECT * FROM servers WHERE ip like '"+ip+"';";
         HashMap<String, String> tmp = new HashMap<>();
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()){
-                tmp.put("ip", rs.getString("ip"));
-                tmp.put("alive", rs.getString("alive"));
-                tmp.put("count", rs.getString("count"));
+                tmp.put("ip", unHexMe(rs.getString("ip")));
+                tmp.put("alive", unHexMe(rs.getString("alive")));
+                tmp.put("count", unHexMe(rs.getString("count")));
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -113,6 +121,9 @@ public class DB {
     }
 
     public static void updateServer(String ip, String alive, String count){
+        ip = hexMe(ip);
+        alive = hexMe(alive);
+        count = hexMe(count);
         String sql = "UPDATE servers SET alive = '"+alive+"', count = '"+count+"' WHERE ip like '"+ip+"';";
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
@@ -123,6 +134,7 @@ public class DB {
     }
 
     public static void deleteServer(String ip){
+        ip = hexMe(ip);
         String sql = "DELETE FROM servers WHERE ip like '"+ip+"';";
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
@@ -133,6 +145,7 @@ public class DB {
     }
 
     public static boolean existsMsg(String hash){
+        hash =	hexMe(hash);
         String sql = "SELECT * FROM message WHERE hash like '"+hash+"';";
         boolean tmp = false;
         try (Connection conn = DriverManager.getConnection(url);
@@ -150,6 +163,11 @@ public class DB {
     }
 
     public static void updMsg(String sender, String receiver, String data, String ts,  String hash){
+        sender = hexMe(sender);
+        receiver = hexMe(receiver);
+        data = hexMe(data);
+        ts = hexMe(ts);
+        hash = hexMe(hash);
         String sql = "INSERT INTO message(sender, receiver, data, ts, hash) VALUES('" + sender + "','" + receiver + "','" + data + "','" + ts + "','" + hash + "');";
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
@@ -160,7 +178,11 @@ public class DB {
     }
 
     public static void inMsg(String sender, String receiver, String data, String hash) {
-        String sql = "INSERT INTO message (sender, receiver, data, ts, hash) VALUES('" + sender + "','" + receiver + "','" + data + "','" + System.currentTimeMillis() + "','" + hash + "');";
+        sender = hexMe(sender);
+        receiver = hexMe(receiver);
+        data = hexMe(data);
+        hash = hexMe(hash);
+        String sql = "INSERT INTO message (sender, receiver, data, ts, hash) VALUES('" + sender + "','" + receiver + "','" + data + "','" + hexMe(System.currentTimeMillis()+"") + "','" + hash + "');";
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
@@ -177,11 +199,11 @@ public class DB {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 HashMap<String, String> m = new HashMap<>();
-                m.put("sender", rs.getString("sender"));
-                m.put("receiver", rs.getString("receiver"));
-                m.put("data", rs.getString("data"));
-                m.put("ts", rs.getString("ts"));
-                m.put("hash", rs.getString("hash"));
+                m.put("sender", unHexMe(rs.getString("sender")));
+                m.put("receiver", unHexMe(rs.getString("receiver")));
+                m.put("data", unHexMe(rs.getString("data")));
+                m.put("ts", unHexMe(rs.getString("ts")));
+                m.put("hash", unHexMe(rs.getString("hash")));
                 tmp.add(m);
             }
         } catch (SQLException e) {
@@ -191,6 +213,7 @@ public class DB {
     }
 
     public static List<HashMap<String, String>> outMsgUsr(String receiver) {
+        receiver = hexMe(receiver);
         long ts = System.currentTimeMillis();
         String sql = "SELECT * FROM message WHERE receiver like '" + receiver + "';";
         List<HashMap<String, String>> tmp = new ArrayList<>();
@@ -198,14 +221,14 @@ public class DB {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                long tsdb = Long.parseLong(rs.getString("ts"));
+                long tsdb = Long.parseLong(unHexMe(rs.getString("ts")));
                 if (ts - tsdb <= 86400000) {
                     HashMap<String, String> m = new HashMap<>();
-                    m.put("sender", rs.getString("sender"));
-                    m.put("receiver", rs.getString("receiver"));
-                    m.put("data", rs.getString("data"));
-                    m.put("ts", rs.getString("ts"));
-                    m.put("hash", rs.getString("hash"));
+                    m.put("sender", unHexMe(rs.getString("sender")));
+                    m.put("receiver", unHexMe(rs.getString("receiver")));
+                    m.put("data", unHexMe(rs.getString("data")));
+                    m.put("ts", unHexMe(rs.getString("ts")));
+                    m.put("hash", unHexMe(rs.getString("hash")));
                     tmp.add(m);
                 }
             }
@@ -223,9 +246,9 @@ public class DB {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                long tsdb = Long.parseLong(rs.getString("ts"));
+                long tsdb = Long.parseLong(unHexMe(rs.getString("ts")));
                 if (ts - tsdb >= 86400000) {
-                    tmp.add(rs.getString("hash"));
+                    tmp.add(unHexMe(rs.getString("hash")));
                 }
             }
         } catch (SQLException e) {
@@ -235,6 +258,7 @@ public class DB {
     }
 
     public static void delete(String hash){
+        hash = hexMe(hash);
         String sql = "DELETE FROM message WHERE hash like '"+hash+"';";
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
@@ -242,5 +266,13 @@ public class DB {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    
+    private static String unHexMe(String hex){
+    	return new String(HexUtils.fromString(hex), StandardCharsets.UTF_8);
+    }
+    
+    private static String hexMe(String toHex){
+    	return HexUtils.toString(toHex.getBytes());
     }
 }
