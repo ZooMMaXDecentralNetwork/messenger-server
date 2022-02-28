@@ -43,7 +43,7 @@ public class DB {
 
     public static void newServer(String ip){
         ip = hexMe(ip);
-        String sql = "INSERT INTO servers(ip, alive, count) VALUES('"+ip+"', 'off', '1');";
+        String sql = "INSERT INTO servers(ip, alive, count) VALUES('"+ip+"', '"+hexMe("off")+"', '"+hexMe("1")+"');";
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
@@ -71,7 +71,7 @@ public class DB {
     }
 
     public static List<String> serversAlive(){
-        String sql = "SELECT * FROM servers WHERE alive like 'on';";
+        String sql = "SELECT * FROM servers WHERE alive like '"+hexMe("on")+"';";
         List<String> tmp = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement();
@@ -87,7 +87,7 @@ public class DB {
     }
 
     public static List<String> serversDead(){
-        String sql = "SELECT * FROM servers WHERE alive like 'off';";
+        String sql = "SELECT * FROM servers WHERE alive like '"+hexMe("off")+"';";
         List<String> tmp = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement();
