@@ -31,16 +31,18 @@ public class UpdateMsg implements Runnable{
                     } catch (InterruptedException | ExecutionException e) {
                         new Errors().save(e.toString());
                     }
-                    JSONArray jArr = jObj.getJSONArray("response");
-                    for (int x = 0; x < jArr.length(); x++) {
-                        JSONObject jsonObject = jArr.getJSONObject(x);
-                        String sender = jsonObject.getString("sender");
-                        String receiver = jsonObject.getString("receiver");
-                        String data = jsonObject.getString("data");
-                        String ts = jsonObject.getString("ts");
-                        String hash = jsonObject.getString("hash");
-                        if (!DB.existsMsg(hash)) {
-                            DB.updMsg(sender, receiver, data, ts, hash);
+                    if (jObj != null) {
+                        JSONArray jArr = jObj.getJSONArray("response");
+                        for (int x = 0; x < jArr.length(); x++) {
+                            JSONObject jsonObject = jArr.getJSONObject(x);
+                            String sender = jsonObject.getString("sender");
+                            String receiver = jsonObject.getString("receiver");
+                            String data = jsonObject.getString("data");
+                            String ts = jsonObject.getString("ts");
+                            String hash = jsonObject.getString("hash");
+                            if (!DB.existsMsg(hash)) {
+                                DB.updMsg(sender, receiver, data, ts, hash);
+                            }
                         }
                     }
                 };
