@@ -1,5 +1,6 @@
 package com.github.ZooMMaXDecentralNetwork.messenger.server.server;
 
+import com.github.ZooMMaXDecentralNetwork.messenger.server.Errors;
 import com.github.ZooMMaXDecentralNetwork.messenger.server.database.DB;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpServer;
@@ -65,7 +66,7 @@ public class ServerMain implements Runnable {
                 try {
                     result = future.get();
                 } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
+                    new Errors().save(e.toString());
                 }
                 respText = result.toString();
                 exchange.sendResponseHeaders(200, respText.getBytes().length);
@@ -99,7 +100,7 @@ public class ServerMain implements Runnable {
                 try {
                     result = future.get();
                 } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
+                    new Errors().save(e.toString());
                 }
                 respText = result.toString();
                 exchange.sendResponseHeaders(200, respText.getBytes().length);
@@ -139,7 +140,7 @@ public class ServerMain implements Runnable {
             server.setExecutor(null); // creates a default executor
             server.start();
         } catch (IOException e) {
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
 
     }
@@ -147,8 +148,9 @@ public class ServerMain implements Runnable {
     private static String decode(final String encoded) {
         try {
             return encoded == null ? null : URLDecoder.decode(encoded, "UTF-8");
-        } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException("UTF-8 is a required encoding", e);
+        } catch (final UnsupportedEncodingException | RuntimeException e) {
+            new Errors().save(e.toString());
+            return null;
         }
     }
 

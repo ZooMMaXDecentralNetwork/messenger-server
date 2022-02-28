@@ -7,36 +7,26 @@ import com.github.ZooMMaXDecentralNetwork.messenger.server.database.UpdateServer
 import com.github.ZooMMaXDecentralNetwork.messenger.server.server.ProccesBuilder;
 import com.github.ZooMMaXDecentralNetwork.messenger.server.server.ServerMain;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class Main {
-    public static void main(String[] args) throws InterruptedException {
-        
+    public static void main(String[] args) throws IOException {
+        new  Errors().mkLogFile();
         DB.mkTables();
-        
         if (args.length > 0){
             if (!DB.existsServer(args[0])){
                 DB.newServer(args[0]);
             }
         }
-        Thread[] tt = new Thread[5];
-        Thread t1 = new Thread(new ServerMain());
-        Thread t2 = new Thread(new ProccesBuilder());
-        Thread t3 = new Thread(new AutoDelete());
-        Thread t4 = new Thread(new ClientMain());
-        Thread t5 = new Thread(new UpdateServersInfo());
-        tt[0] = t1;
-        tt[1] = t2;
-        tt[2] = t3;
-        tt[3] = t4;
-        tt[4] = t5;
-        while (true){
-        	for(Thread t : tt){
-        		if(!t.isAlive()){
-        			t.start();
-        			System.out.println(t.getName());
-        		}
-        		Thread.sleep(5000);
-        	}
-     
-        }
+
+        new Thread(new ServerMain()).start();
+        new Thread(new ProccesBuilder()).start();
+        new Thread(new AutoDelete()).start();
+        new Thread(new ClientMain()).start();
+        new Thread(new UpdateServersInfo()).start();
     }
 }

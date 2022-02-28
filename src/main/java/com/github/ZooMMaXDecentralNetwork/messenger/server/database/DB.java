@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.github.ZooMMaXDecentralNetwork.messenger.server.Errors;
 import ru.zoommax.hul.HexUtils;
 
 public class DB {
@@ -15,7 +16,7 @@ public class DB {
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
     }
 
@@ -37,7 +38,7 @@ public class DB {
             stmt.execute(sql);
             stmt.execute(sql2);
         } catch (SQLException e) {
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
     }
 
@@ -48,7 +49,7 @@ public class DB {
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
         } catch (SQLException e) {
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
     }
 
@@ -65,7 +66,7 @@ public class DB {
                 }
             }
         }catch (SQLException e){
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
         return tmp;
     }
@@ -81,7 +82,7 @@ public class DB {
                 tmp.add(res);
             }
         }catch (SQLException e){
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
         return tmp;
     }
@@ -97,7 +98,7 @@ public class DB {
                 tmp.add(res);
             }
         }catch (SQLException e){
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
         return tmp;
     }
@@ -115,7 +116,7 @@ public class DB {
                 tmp.put("count", unHexMe(rs.getString("count")));
             }
         }catch (SQLException e){
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
         return tmp;
     }
@@ -129,7 +130,7 @@ public class DB {
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
         } catch (SQLException e) {
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
     }
 
@@ -140,7 +141,7 @@ public class DB {
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
         } catch (SQLException e) {
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
     }
 
@@ -157,7 +158,7 @@ public class DB {
                 }
             }
         }catch (SQLException e){
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
         return tmp;
     }
@@ -173,7 +174,7 @@ public class DB {
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
         } catch (SQLException e) {
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
     }
 
@@ -187,7 +188,7 @@ public class DB {
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
         } catch (SQLException e) {
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
     }
 
@@ -207,7 +208,7 @@ public class DB {
                 tmp.add(m);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
         return tmp;
     }
@@ -233,7 +234,7 @@ public class DB {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
         return tmp;
     }
@@ -252,7 +253,7 @@ public class DB {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
         return tmp;
     }
@@ -264,7 +265,7 @@ public class DB {
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
         } catch (SQLException e) {
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
     }
     

@@ -1,5 +1,7 @@
 package com.github.ZooMMaXDecentralNetwork.messenger.server.server;
 
+import com.github.ZooMMaXDecentralNetwork.messenger.server.Errors;
+
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -13,11 +15,6 @@ public class ProccesBuilder implements Runnable{
     @Override
     public void run() {
         while (true) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             inputData = ServerMain.getInputData();
             ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
             for (byte[] a : inputData) {
@@ -25,9 +22,18 @@ public class ProccesBuilder implements Runnable{
                 try {
                     worker = new DataSaver(a);
                 } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
+                    new Errors().save(e.toString());
                 }
                 executor.execute(worker);
+            }
+            executor.shutdown();
+            while (!executor.isTerminated()){
+            }
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                new Errors().save(e.toString());
             }
         }
     }

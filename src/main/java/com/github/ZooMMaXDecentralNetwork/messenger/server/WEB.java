@@ -12,7 +12,7 @@ public class WEB {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uri))
-                .timeout(Duration.ofSeconds(3))
+                .timeout(Duration.ofSeconds(30))
                 .build();
 
         return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())

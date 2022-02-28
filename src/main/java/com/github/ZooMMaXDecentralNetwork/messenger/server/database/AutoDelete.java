@@ -1,5 +1,7 @@
 package com.github.ZooMMaXDecentralNetwork.messenger.server.database;
 
+import com.github.ZooMMaXDecentralNetwork.messenger.server.Errors;
+
 import java.util.List;
 
 public class AutoDelete implements Runnable{
@@ -12,7 +14,7 @@ public class AutoDelete implements Runnable{
         try {
             Thread.sleep(10000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            new Errors().save(e.toString());
         }
     }
 }
