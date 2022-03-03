@@ -123,10 +123,41 @@ public class ServerMain implements Runnable {
                 exchange.close();
             });
 
+            server.createContext("/api/v1/pingclient", exchange -> {
+                String respText = "alive";
+                exchange.sendResponseHeaders(200, respText.getBytes().length);
+                OutputStream output = exchange.getResponseBody();
+                output.write(respText.getBytes());
+                output.flush();
+                exchange.close();
+            });
+
             server.createContext("/api/v1/getservers", exchange -> {
                 String respText = "";
                 List<String> servers = DB.serversAlive();
-                JSONObject jsonObject = new JSONObject().put("servers", servers);
+                List<String> serversRnd = new ArrayList<>();
+                List<Integer> rnd = new ArrayList<>();
+                rnd.add(new Random().nextInt(servers.size()));
+                if (servers.size() > 100){
+                    while (rnd.size() != 100){
+                        int random = new Random().nextInt(servers.size());
+                        boolean exists = false;
+                        for (Integer i : rnd){
+                            if (i == random){
+                                exists = true;
+                            }
+                        }
+                        if (!exists){
+                            rnd.add(random);
+                        }
+                    }
+                    for (Integer i : rnd){
+                        serversRnd.add(servers.get(i));
+                    }
+                }else {
+                    serversRnd.addAll(servers);
+                }
+                JSONObject jsonObject = new JSONObject().put("servers", serversRnd);
                 respText = jsonObject.toString();
                 exchange.sendResponseHeaders(200, respText.getBytes().length);
                 OutputStream output = exchange.getResponseBody();

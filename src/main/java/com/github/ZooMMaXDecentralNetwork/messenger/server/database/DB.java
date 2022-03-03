@@ -26,7 +26,8 @@ public class DB {
                 "receiver TEXT NOT NULL," +
                 "data TEXT NOT NULL," +
                 "ts TEXT NOT NULL," +
-                "hash TEXT NOT NULL" +
+                "hash TEXT NOT NULL," +
+                "ptp TEXT NOT NULL" +
                 ");";
         String sql2 = "CREATE TABLE IF NOT EXISTS servers (" +
                 "ip TEXT NOT NULL," +
@@ -178,12 +179,16 @@ public class DB {
         }
     }
 
-    public static void inMsg(String sender, String receiver, String data, String hash) {
+    public static void inMsg(String sender, String receiver, String data, String hash, String ptp) {
         sender = hexMe(sender);
         receiver = hexMe(receiver);
         data = hexMe(data);
         hash = hexMe(hash);
-        String sql = "INSERT INTO message (sender, receiver, data, ts, hash) VALUES('" + sender + "','" + receiver + "','" + data + "','" + hexMe(System.currentTimeMillis()+"") + "','" + hash + "');";
+        ptp = hexMe(ptp);
+        String sql = "INSERT INTO message (sender, receiver, data, ts, hash, ptp) VALUES('" + sender + "','" + receiver + "','" + data + "'," +
+                "'" + hexMe(System.currentTimeMillis()+"") + "','" + hash + "'," +
+                "'"+ptp+"'" +
+                ");";
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
@@ -193,7 +198,7 @@ public class DB {
     }
 
     public static List<HashMap<String, String>> outMsgSrv() {
-        String sql = "SELECT * FROM message;";
+        String sql = "SELECT * FROM message WHERE ptp like '"+hexMe("0")+"';";
         List<HashMap<String, String>> tmp = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement();
@@ -231,6 +236,9 @@ public class DB {
                     m.put("ts", unHexMe(rs.getString("ts")));
                     m.put("hash", unHexMe(rs.getString("hash")));
                     tmp.add(m);
+                    if (unHexMe(rs.getString("ptp")).equals("1")){
+                        DB.delete(unHexMe(rs.getString("hash")));
+                    }
                 }
             }
         } catch (SQLException e) {
