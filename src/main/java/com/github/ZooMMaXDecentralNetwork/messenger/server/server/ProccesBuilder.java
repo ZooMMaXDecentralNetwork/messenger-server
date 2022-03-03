@@ -6,15 +6,15 @@ import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimerTask;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ProccesBuilder implements Runnable{
+public class ProccesBuilder extends TimerTask {
     List<byte[]> inputData = new ArrayList<>();
     @Override
     public void run() {
-        while (true) {
             inputData = ServerMain.getInputData();
             ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
             for (byte[] a : inputData) {
@@ -29,12 +29,5 @@ public class ProccesBuilder implements Runnable{
             executor.shutdown();
             while (!executor.isTerminated()){
             }
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                new Errors().save(e.toString());
-            }
-        }
     }
 }

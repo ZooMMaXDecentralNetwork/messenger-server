@@ -12,15 +12,15 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.List;
+import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class UpdateMsg implements Runnable{
+public class UpdateMsg extends TimerTask {
     @Override
     public void run() {
-        while (true) {
             List<String> servers = DB.serversAlive();
             ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
             for (String ip : servers) {
@@ -51,13 +51,6 @@ public class UpdateMsg implements Runnable{
             executorService.shutdown();
             while (!executorService.isTerminated()){
             }
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
 }

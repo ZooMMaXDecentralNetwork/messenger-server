@@ -7,14 +7,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class GetServers implements Runnable{
+public class GetServers extends TimerTask {
     @Override
     public void run() {
-        while (true) {
             List<String> servers = DB.serversAlive();
             ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
             for (String ip : servers) {
@@ -40,11 +40,5 @@ public class GetServers implements Runnable{
             executorService.shutdown();
             while (!executorService.isTerminated()){
             }
-            try {
-                Thread.sleep(30000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

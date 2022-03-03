@@ -5,16 +5,15 @@ import com.github.ZooMMaXDecentralNetwork.messenger.server.WEB;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class UpdateServersInfo implements Runnable{
+public class UpdateServersInfo extends TimerTask {
 
     @Override
     public void run() {
-        while (true) {
-
             ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
             List<String> deadIp = DB.serversDead();
@@ -78,12 +77,5 @@ public class UpdateServersInfo implements Runnable{
             executorService.shutdown();
             while (!executorService.isTerminated()){
             }
-
-            try {
-                Thread.sleep(30000);
-            } catch (InterruptedException e) {
-                new Errors().save(e.toString());
-            }
-        }
     }
 }

@@ -9,6 +9,7 @@ import com.github.ZooMMaXDecentralNetwork.messenger.server.server.ProccesBuilder
 import com.github.ZooMMaXDecentralNetwork.messenger.server.server.ServerMain;
 
 import java.io.IOException;
+import java.util.Timer;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -20,11 +21,13 @@ public class Main {
             }
         }
 
+
+
         new Thread(new ServerMain()).start();
-        new Thread(new ProccesBuilder()).start();
-        new Thread(new AutoDelete()).start();
-        new Thread(new GetServers()).start();
-        new Thread(new UpdateMsg()).start();
-        new Thread(new UpdateServersInfo()).start();
+        new Timer().schedule(new ProccesBuilder(), 0, 1000);
+        new Timer().schedule(new AutoDelete(), 0 , 10000);
+        new Timer().schedule(new GetServers(), 0, 30000);
+        new Timer().schedule(new UpdateMsg(), 0, 1000);
+        new Timer().schedule(new UpdateServersInfo(), 0, 30000);
     }
 }
