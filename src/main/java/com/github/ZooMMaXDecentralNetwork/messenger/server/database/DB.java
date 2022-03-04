@@ -170,7 +170,8 @@ public class DB {
         data = hexMe(data);
         ts = hexMe(ts);
         hash = hexMe(hash);
-        String sql = "INSERT INTO message(sender, receiver, data, ts, hash) VALUES('" + sender + "','" + receiver + "','" + data + "','" + ts + "','" + hash + "');";
+        String ptp = hexMe("0");
+        String sql = "INSERT INTO message(sender, receiver, data, ts, hash, ptp) VALUES('" + sender + "','" + receiver + "','" + data + "','" + ts + "','" + hash + "', '"+ptp+"');";
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);

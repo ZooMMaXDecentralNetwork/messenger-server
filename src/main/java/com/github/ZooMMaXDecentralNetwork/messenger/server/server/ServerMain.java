@@ -77,7 +77,7 @@ public class ServerMain implements Runnable {
             });
 
             server.createContext("/api/v1/syncmessageclient", exchange -> {
-                String request = HexUtils.toString(decode(exchange.getRequestURI().getRawQuery()).getBytes(StandardCharsets.UTF_8));
+                String request = decode(exchange.getRequestURI().getRawQuery());
                 String respText = "";
                 String finalRequest = request;
                 Callable task = () -> {

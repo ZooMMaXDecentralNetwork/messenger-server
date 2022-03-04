@@ -19,10 +19,10 @@ public class DataSaver implements Runnable{
 
     public DataSaver(byte[] request) throws NoSuchAlgorithmException {
         JSONObject jObj = new JSONObject(new String(request, StandardCharsets.UTF_8));
-        this.sender = HexUtils.toString(jObj.getString("sender").getBytes(StandardCharsets.UTF_8));
-        this.receiver = HexUtils.toString(jObj.getString("receiver").getBytes(StandardCharsets.UTF_8));
-        this.data = HexUtils.toString(jObj.getString("data").getBytes(StandardCharsets.UTF_8));
-        this.ptp = HexUtils.toString(jObj.getString("peertopeer").getBytes(StandardCharsets.UTF_8));
+        this.sender = jObj.getString("sender");
+        this.receiver = jObj.getString("receiver");
+        this.data = jObj.getString("data");
+        this.ptp = jObj.getString("peertopeer");
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         String toHash = new String(request, StandardCharsets.UTF_8) + new Random().nextInt();
         this.hash = HexUtils.toString(md.digest(toHash.getBytes(StandardCharsets.UTF_8)));

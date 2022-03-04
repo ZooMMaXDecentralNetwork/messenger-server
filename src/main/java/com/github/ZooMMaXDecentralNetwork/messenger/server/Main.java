@@ -29,5 +29,6 @@ public class Main {
         new Timer().schedule(new GetServers(), 0, 30000);
         new Timer().schedule(new UpdateMsg(), 0, 1000);
         new Timer().schedule(new UpdateServersInfo(), 0, 30000);
+        System.out.println("Server started");
     }
 }
