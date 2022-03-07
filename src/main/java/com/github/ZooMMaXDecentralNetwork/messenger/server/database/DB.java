@@ -229,7 +229,7 @@ public class DB {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 long tsdb = Long.parseLong(unHexMe(rs.getString("ts")));
-                if (ts - tsdb <= 86400) {
+                if (ts - tsdb <= 86400000) {
                     HashMap<String, String> m = new HashMap<>();
                     m.put("sender", unHexMe(rs.getString("sender")));
                     m.put("receiver", unHexMe(rs.getString("receiver")));
@@ -257,7 +257,7 @@ public class DB {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 long tsdb = Long.parseLong(unHexMe(rs.getString("ts")));
-                if (ts - tsdb >= 86400) {
+                if (ts - tsdb >= 86400000) {
                     tmp.add(unHexMe(rs.getString("hash")));
                 }
             }
