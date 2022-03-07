@@ -13,5 +13,5 @@ start server
 
 ```bash
 cd ../DecentralNetwork
-java -jar MessangerServer-1.0.jar 213.5.31.38
+java -jar MessangerServer-1.0.jar 185.235.131.192
 ```
